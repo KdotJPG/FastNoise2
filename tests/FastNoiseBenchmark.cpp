@@ -144,7 +144,7 @@ int main( int argc, char** argv )
                 groupName = metadata->groups[metadata->groups.size() - 1];
             }
 
-            std::string nodeName = FastNoise::Metadata::FormatMetadataNodeName( metadata, false );
+            std::string nodeName = metadata->formattedName;
 
            RegisterBenchmarks( level, groupName, nodeName.c_str(), [=]( benchmark::State& st ) { return BuildGenerator( st, metadata, level ); } );
         }

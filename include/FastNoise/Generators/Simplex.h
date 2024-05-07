@@ -40,6 +40,8 @@ namespace FastNoise
 
         MetadataT()
         {
+            formattedName = "SuperSimplex";
+
             groups.push_back( "Coherent Noise" );
 
             description =

@@ -98,14 +98,6 @@ namespace FastNoise
         };
 
         /// <summary>
-        /// Add spaces to node names: DomainScale -> Domain Scale
-        /// </summary>
-        /// <param name="metadata">FastNoise node metadata</param>
-        /// <param name="removeGroups">Removes metadata groups from name: FractalFBm -> FBm</param>
-        /// <returns>string with formatted name</returns>
-        static std::string FormatMetadataNodeName( const Metadata* metadata, bool removeGroups = false );
-
-        /// <summary>
         /// Adds dimension prefix to member varibles that per-dimension:
         /// DomainAxisScale::Scale -> X Scale
         /// </summary>
@@ -189,6 +181,8 @@ namespace FastNoise
 
         uint16_t id;
         const char* name = "";
+        const char* formattedName = "";
+        const char* formattedNameWithoutGroups = "";
         const char* description = "";
         std::vector<const char*> groups;
 

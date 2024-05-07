@@ -357,7 +357,7 @@ bool FastNoiseNodeEditor::MetadataMenuItem::CanDraw( std::function<bool( const F
 
 const FastNoise::Metadata* FastNoiseNodeEditor::MetadataMenuItem::DrawUI( std::function<bool( const FastNoise::Metadata* )> isValid, bool drawGroups ) const
 {
-    std::string format = FastNoise::Metadata::FormatMetadataNodeName( metadata, true );
+    std::string format = metadata->formattedNameWithoutGroups;
     
     if( ImGui::MenuItem( format.c_str() ) )
     {
@@ -1033,7 +1033,7 @@ void FastNoiseNodeEditor::DoNodes()
         ImNodes::BeginNode( node.second.nodeId );
 
         ImNodes::BeginNodeTitleBar();
-        std::string formatName = FastNoise::Metadata::FormatMetadataNodeName( node.second.data->metadata );
+        std::string formatName = node.second.data->metadata->formattedName;
         ImGui::TextUnformatted( formatName.c_str() );
 
 #ifdef NDEBUG

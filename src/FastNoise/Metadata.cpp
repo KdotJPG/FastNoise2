@@ -408,38 +408,6 @@ NodeData* Metadata::DeserialiseNodeData( const char* serialisedBase64NodeData, s
     return DeserialiseNodeDataInternal( dataStream, nodeDataOut, startIdx );
 }
 
-std::string Metadata::FormatMetadataNodeName( const Metadata* metadata, bool removeGroups )
-{
-    std::string string = metadata->name;
-    for( size_t i = 1; i < string.size(); i++ )
-    {
-        if( ( isdigit( string[i] ) || isupper( string[i] ) ) && islower( string[i - 1] ) )
-        {
-            string.insert( i++, 1, ' ' );
-        }
-    }
-
-    if( removeGroups )
-    {
-        for( auto group : metadata->groups )
-        {
-            size_t start_pos = string.find( group );
-            if( start_pos != std::string::npos )
-            {
-                string.erase( start_pos, std::strlen( group ) + 1 );
-            }
-        }
-    }
-
-    // Fallback since empty strings cause imgui errors
-    if( string.empty() )
-    {
-        return metadata->name;
-    }
-
-    return string;
-}
-
 std::string Metadata::FormatMetadataMemberName( const Member& member )
 {
     std::string string = member.name;
@@ -461,11 +429,39 @@ template<typename T>
 std::unique_ptr<const MetadataT<T>> CreateMetadataInstance( const char* className )
 {
     auto* newMetadata = new MetadataT<T>;
-    newMetadata->name = className; 
+    newMetadata->name = className;
     newMetadata->memberVariables.shrink_to_fit();
     newMetadata->memberNodeLookups.shrink_to_fit();
     newMetadata->memberHybrids.shrink_to_fit();
     newMetadata->groups.shrink_to_fit();
+
+    if( newMetadata->formattedName == "" ) {
+        std::string* formattedName = new std::string( newMetadata->name );
+        for( size_t i = 1; i < formattedName->size(); i++ )
+        {
+            if( ( isdigit( formattedName->at( i ) ) || isupper( formattedName->at( i ) ) ) && islower( formattedName->at( i - 1 ) ) )
+            {
+                formattedName->insert( i++, 1, ' ' );
+            }
+        }
+        newMetadata->formattedName = formattedName->c_str();
+    }
+
+    {
+        std::string* formattedNameWithoutGroups = new std::string( newMetadata->formattedName );
+        for( auto group : newMetadata->groups )
+        {
+            size_t startPos = formattedNameWithoutGroups->find( group );
+            if( startPos != std::string::npos )
+            {
+                formattedNameWithoutGroups->erase( startPos, std::strlen( group ) + 1 );
+            }
+        }
+
+        newMetadata->formattedNameWithoutGroups = formattedNameWithoutGroups->empty() ?
+            newMetadata->formattedName : // Fallback since empty strings cause imgui errors
+            formattedNameWithoutGroups->c_str();
+    }
 
     // Node must be in a group or it is not selectable in the UI
     assert( !newMetadata->groups.empty() ); 
